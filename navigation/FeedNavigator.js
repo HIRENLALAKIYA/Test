@@ -13,6 +13,14 @@ import { createStackNavigator } from "react-navigation-stack";
 const ScreenNavigator = createStackNavigator({
   MyFeed: {
     screen: FeedScreen,
+    navigationOptions: {
+      headerTitle: "MY APP",
+      headerStyle: {
+        backgroundColor: Platform.OS === "android" ? Colors.primaryColor : "",
+      },
+      headerTintColor:
+        Platform.OS === "android" ? "white" : Colors.primaryColor,
+    },
   },
   Choice: {
     screen: ChoiceScreen,

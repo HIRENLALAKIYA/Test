@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,20 +7,26 @@ import {
   Dimensions,
   Platform,
   ScrollView,
+  TextInput,
+  Alert,
 } from "react-native";
-import { color } from "react-native-reanimated";
 import { useSelector, useDispatch } from "react-redux";
 import Colors from "../constants/Colors";
 import { loadStrip } from "../store/actions/Strip";
 
 const StripScreen = () => {
   const stripFetchedData = useSelector((state) => state.strip.stripItems);
+  const [textInputs, setTextInputs] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(loadStrip());
   }, [dispatch]);
-  console.log("1234StripScreenLoading" + stripFetchedData);
-  console.log(stripFetchedData[0].values);
+  console.log("StripScreenLoading" + stripFetchedData);
+  const horizontalDataValue = stripFetchedData[0].values.map((x, i) => {
+    x.id = (i + 1).toString();
+    return x;
+  });
+  // console.log("horizontal" + stripFetchedData[0].values);
   const leftStripdummyData = [
     { id: "1", color: "rgb(97,88,138)" },
     { id: "2", color: "rgb(245,248,127)" },
@@ -34,7 +40,14 @@ const StripScreen = () => {
       <View style={styles.header}>
         <Text style={styles.text}>Test Strip</Text>
         <View style={styles.nextContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              Alert.alert("You Have Selected", textInputs.toString(), [
+                <Text>Okey</Text>,
+              ]);
+            }}
+          >
             <Text style={styles.buttontext}>Next</Text>
           </TouchableOpacity>
         </View>
@@ -55,27 +68,126 @@ const StripScreen = () => {
             })}
           </View>
           <View style={styles.rightStrip}>
-            <View style={styles.horizontal}>
-              {stripFetchedData[0].values
-                .map((x, i) => {
-                  x.id = (i + 1).toString();
-                  return x;
-                })
-                .map((item) => {
-                  return (
+            {/* <View style={styles.horizontal}> */}
+            {stripFetchedData.map((stripItem) => {
+              return (
+                <View key={stripItem.id}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: Dimensions.get("window").height * 0.01,
+                    }}
+                  >
                     <View
-                      key={item.id}
                       style={{
-                        height: Dimensions.get("window").width * 0.1,
-                        backgroundColor: item.color,
-                        borderRadius: 10,
-                        width: Dimensions.get("window").width * 0.15,
-                        marginRight: Dimensions.get("window").width * 0.02,
+                        width: (Dimensions.get("window").width * 0.83) / 2,
+                        flexDirection: "row",
                       }}
-                    />
-                  );
-                })}
-            </View>
+                    >
+                      <Text
+                        style={{
+                          marginRight: Dimensions.get("window").width * 0.02,
+                          color: "#ccc",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {stripItem.name}
+                      </Text>
+                      <Text style={{ color: "#ccc" }}>({stripItem.unit})</Text>
+                    </View>
+                    <View
+                      style={{
+                        width: (Dimensions.get("window").width * 0.83) / 2,
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <TextInput
+                        style={{
+                          color: Colors.primaryColor,
+                          borderColor: "#ccc",
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          width: Dimensions.get("window").width * 0.15,
+                          height: Dimensions.get("window").height * 0.05,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          textAlign: "center",
+                        }}
+                        keyboardType="numeric"
+                        value={textInputs}
+                        onChangeText={(enteredValue) => {
+                          setTextInputs(enteredValue);
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                    }}
+                  >
+                    {stripItem.values
+                      .map((x, i) => {
+                        x.id = (i + 1).toString();
+                        return x;
+                      })
+                      .map((item) => {
+                        return (
+                          <View key={item.id}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                setTextInputs(item.value);
+                              }}
+                            >
+                              <View
+                                style={{
+                                  height: Dimensions.get("window").width * 0.1,
+                                  backgroundColor: item.color,
+                                  borderRadius: 10,
+                                  width: Dimensions.get("window").width * 0.15,
+                                  marginRight:
+                                    Dimensions.get("window").width * 0.02,
+                                }}
+                              />
+                            </TouchableOpacity>
+                            <Text
+                              style={{
+                                textAlign: "center",
+                                width: Dimensions.get("window").width * 0.15,
+                                height: Dimensions.get("window").width * 0.1,
+                                marginRight:
+                                  Dimensions.get("window").width * 0.02,
+                                marginTop:
+                                  Dimensions.get("window").height * 0.01,
+                              }}
+                            >
+                              {item.value}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                  </View>
+                </View>
+              );
+            })}
+            {/* {horizontalDataValue.map((item) => {
+                return (
+                  <View
+                    key={item.id}
+                    style={{
+                      height: Dimensions.get("window").width * 0.1,
+                      backgroundColor: item.color,
+                      borderRadius: 10,
+                      width: Dimensions.get("window").width * 0.15,
+                      marginRight: Dimensions.get("window").width * 0.02,
+                    }}
+                  />
+                );
+              })} */}
+            {/* </View> */}
           </View>
         </View>
       </ScrollView>
@@ -135,9 +247,10 @@ const styles = StyleSheet.create({
   rightStrip: {
     height: Dimensions.get("window").height * 1.2,
     justifyContent: "space-around",
+    width: Dimensions.get("window").width * 0.83,
   },
   horizontal: {
-    flexDirection: "row",
+    // height: Dimensions.get("window").height * 1.2,
   },
 });
 export default StripScreen;
