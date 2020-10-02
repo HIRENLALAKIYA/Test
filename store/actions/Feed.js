@@ -19,8 +19,7 @@ export const loadVideo = () => {
         throw new Error("Something went wrong!");
       }
       const responseData = await response.json();
-      dispatch({ type: ADD_PROFILE, videoList: responseData.videos });
-      console.log(responseData);
+      dispatch({ type: LOAD_VIDEO, videoList: responseData.videos });
     } catch (err) {
       throw err;
     }

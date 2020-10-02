@@ -1,9 +1,15 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 const Card = (props) => {
   return (
-    <View style={{ ...styles.card, ...props.style }}>{props.children}</View>
+    <TouchableOpacity
+      onPress={props.onPress}
+      onLongPress={props.onLongPress}
+      style={{ ...styles.card, ...props.style }}
+    >
+      {props.children}
+    </TouchableOpacity>
   );
 };
 

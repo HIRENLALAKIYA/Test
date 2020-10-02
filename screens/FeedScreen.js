@@ -11,12 +11,16 @@ import {
 import VideoFeed from "../components/VideoFeed";
 import { useDispatch, useSelector } from "react-redux";
 import { loadVideo } from "../store/actions/Feed";
+import ProfilePicker from "../components/ProfilePic";
 
 const FeedScreen = (props) => {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(loadVideo());
+  }, [dispatch]);
+
   const FeedData = useSelector((state) => state.feed.videoFeeds);
-  console.log(FeedData);
 
   return (
     <View style={styles.screen}>
@@ -72,6 +76,7 @@ const styles = StyleSheet.create({
   videoScreen: {
     alignItems: "center",
     marginTop: 25,
+    marginBottom: 50,
   },
 });
 export default FeedScreen;
