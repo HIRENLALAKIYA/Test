@@ -2,7 +2,6 @@ import React from "react";
 import { View, StyleSheet, Text, Dimensions, Platform } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
-import Colors from "../constants/Colors";
 import { addProfile } from "../store/actions/Feed";
 import { useDispatch } from "react-redux";
 import Card from "../components/Card";
@@ -36,7 +35,6 @@ const ChoiceScreen = (props) => {
       aspect: [16, 9],
       quality: 0.5,
     });
-    //   setPickedImage(image.uri);
     dispatch(addProfile(image.uri));
     props.navigation.navigate("MyFeed");
   };
@@ -53,7 +51,6 @@ const ChoiceScreen = (props) => {
     });
 
     if (!image.cancelled) {
-      // setPickedImage(image.uri);
       dispatch(addProfile(image.uri));
       props.navigation.navigate("MyFeed");
     }

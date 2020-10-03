@@ -21,12 +21,7 @@ const StripScreen = () => {
   useEffect(() => {
     dispatch(loadStrip());
   }, [dispatch]);
-  console.log("StripScreenLoading" + stripFetchedData);
-  const horizontalDataValue = stripFetchedData[0].values.map((x, i) => {
-    x.id = (i + 1).toString();
-    return x;
-  });
-  // console.log("horizontal" + stripFetchedData[0].values);
+
   const leftStripdummyData = [
     { id: "1", color: "rgb(97,88,138)" },
     { id: "2", color: "rgb(245,248,127)" },
@@ -68,7 +63,6 @@ const StripScreen = () => {
             })}
           </View>
           <View style={styles.rightStrip}>
-            {/* <View style={styles.horizontal}> */}
             {stripFetchedData.map((stripItem) => {
               return (
                 <View key={stripItem.id}>
@@ -173,21 +167,6 @@ const StripScreen = () => {
                 </View>
               );
             })}
-            {/* {horizontalDataValue.map((item) => {
-                return (
-                  <View
-                    key={item.id}
-                    style={{
-                      height: Dimensions.get("window").width * 0.1,
-                      backgroundColor: item.color,
-                      borderRadius: 10,
-                      width: Dimensions.get("window").width * 0.15,
-                      marginRight: Dimensions.get("window").width * 0.02,
-                    }}
-                  />
-                );
-              })} */}
-            {/* </View> */}
           </View>
         </View>
       </ScrollView>
@@ -248,9 +227,6 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height * 1.2,
     justifyContent: "space-around",
     width: Dimensions.get("window").width * 0.83,
-  },
-  horizontal: {
-    // height: Dimensions.get("window").height * 1.2,
   },
 });
 export default StripScreen;

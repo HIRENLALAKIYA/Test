@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,12 +15,38 @@ import ProfilePicker from "../components/ProfilePic";
 import { loadStrip } from "../store/actions/Strip";
 
 const FeedScreen = (props) => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(loadVideo());
     dispatch(loadStrip());
+    dispatch(loadVideo());
+    setIsRefreshing(false);
   }, [dispatch]);
+
+  const refresHandler = async () => {
+    setIsRefreshing(true);
+    try {
+      await dispatch(loadVideo());
+    } catch (err) {
+      setError(err);
+    }
+    setIsRefreshing(false);
+  };
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text>An error occurred!</Text>
+        <Button
+          title="Try again"
+          onPress={loadProducts}
+          color={Colors.primary}
+        />
+      </View>
+    );
+  }
 
   const FeedData = useSelector((state) => state.feed.videoFeeds);
 
@@ -36,6 +62,8 @@ const FeedScreen = (props) => {
       </View>
       <View style={styles.videoScreen}>
         <FlatList
+          refreshing={isRefreshing}
+          onRefresh={refresHandler}
           data={FeedData}
           renderItem={(itemData) => (
             <VideoFeed
@@ -79,6 +107,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 25,
     marginBottom: 50,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 export default FeedScreen;

@@ -21,12 +21,9 @@ const VideoFeed = (props) => {
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
-          // shared with activity type of result.activityType
         } else {
-          // shared
         }
       } else if (result.action === Share.dismissedAction) {
-        // dismissed
       }
     } catch (error) {
       alert(error.message);
@@ -35,7 +32,6 @@ const VideoFeed = (props) => {
 
   const playPauseHandler = () => {
     setPlay((prevState) => !prevState);
-    // setShow((prevState) => !prevState);
   };
 
   return (
@@ -44,7 +40,6 @@ const VideoFeed = (props) => {
       onPress={playPauseHandler}
       onLongPress={onShare}
     >
-      {/* <TouchableOpacity onPress={playPauseHandler}> */}
       <View style={styles.videoFeed}>
         <Video
           isLooping={true}
@@ -53,23 +48,15 @@ const VideoFeed = (props) => {
           posterSource={{
             uri: props.thumbnail,
           }}
-          // usePoster={show}
-          // useNativeControls={true}
           resizeMode="stretch"
           style={{ width: "100%", height: "100%" }}
         />
         <View style={styles.button}>
           {play ? null : (
-            <Ionicons
-              name="md-play-circle"
-              size={65}
-              color="white"
-              // onPress={playPauseHandler}
-            />
+            <Ionicons name="md-play-circle" size={65} color="white" />
           )}
         </View>
       </View>
-      {/* </TouchableOpacity> */}
       <View style={styles.title}>
         <Text style={styles.text}>{props.title}</Text>
       </View>
