@@ -16,7 +16,7 @@ import { loadStrip } from "../store/actions/Strip";
 
 const StripScreen = () => {
   const stripFetchedData = useSelector((state) => state.strip.stripItems);
-  const [textInputs, setTextInputs] = useState("");
+  const [textInputs, setTextInputs] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(loadStrip());
@@ -38,9 +38,20 @@ const StripScreen = () => {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              Alert.alert("You Have Selected", textInputs.toString(), [
-                <Text>Okey</Text>,
-              ]);
+              if (textInputs.length < 6) {
+                Alert.alert(
+                  "Please Enter any Numeric Value",
+                  "You must have to Enter a value in all Inputbox",
+                  [{ text: "ok" }]
+                );
+              } else {
+                Alert.alert(
+                  "Results Are !",
+                  `Value of Total Hardness is ${textInputs[0]} ppm\nValue of Total chlorine is ${textInputs[1]} ppm\nValue of Free Chlorine is ${textInputs[2]} ppm\npH Value is ${textInputs[3]} ppm\nValue of Total Alkalinity is ${textInputs[4]} ppm\nValue of Cynauric Acid is ${textInputs[5]} ppm`,
+                  [<Text>Okey</Text>]
+                );
+                setTextInputs([]);
+              }
             }}
           >
             <Text style={styles.buttontext}>Next</Text>
@@ -57,20 +68,27 @@ const StripScreen = () => {
                   style={{
                     backgroundColor: strip.color,
                     height: Dimensions.get("window").width * 0.1,
+                    marginVertical: Dimensions.get("window").width * 0.12,
                   }}
                 />
               );
             })}
           </View>
           <View style={styles.rightStrip}>
-            {stripFetchedData.map((stripItem) => {
+            {stripFetchedData.map((stripItem, index) => {
               return (
-                <View key={stripItem.id}>
+                <View
+                  key={stripItem.id}
+                  style={{
+                    height: Dimensions.get("window").width * 0.34,
+                  }}
+                >
                   <View
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
-                      marginBottom: Dimensions.get("window").height * 0.01,
+                      height: Dimensions.get("window").width * 0.1,
+                      marginBottom: Dimensions.get("window").width * 0.02,
                     }}
                   >
                     <View
@@ -95,6 +113,7 @@ const StripScreen = () => {
                         width: (Dimensions.get("window").width * 0.83) / 2,
                         flexDirection: "row",
                         justifyContent: "flex-end",
+                        height: Dimensions.get("window").width * 0.1,
                       }}
                     >
                       <TextInput
@@ -104,16 +123,18 @@ const StripScreen = () => {
                           borderWidth: 1,
                           borderRadius: 5,
                           width: Dimensions.get("window").width * 0.15,
-                          height: Dimensions.get("window").height * 0.05,
-                          justifyContent: "center",
+                          height: Dimensions.get("window").width * 0.09,
                           alignItems: "center",
                           textAlign: "center",
                         }}
-                        keyboardType="numeric"
-                        value={textInputs}
-                        onChangeText={(enteredValue) => {
-                          setTextInputs(enteredValue);
+                        keyboardType="number-pad"
+                        onChangeText={(text) => {
+                          let oldInput = [...textInputs];
+                          oldInput[index] = text.replace(/[^0-9]/g, "");
+                          setTextInputs(oldInput);
                         }}
+                        value={textInputs[index]}
+                        maxLength={4}
                       />
                     </View>
                   </View>
@@ -121,6 +142,7 @@ const StripScreen = () => {
                   <View
                     style={{
                       flexDirection: "row",
+                      height: Dimensions.get("window").width * 0.22,
                     }}
                   >
                     {stripItem.values
@@ -133,7 +155,10 @@ const StripScreen = () => {
                           <View key={item.id}>
                             <TouchableOpacity
                               onPress={() => {
-                                setTextInputs(item.value);
+                                const value = item.value;
+                                let oldInput = [...textInputs];
+                                oldInput[index] = value;
+                                setTextInputs(oldInput);
                               }}
                             >
                               <View
@@ -143,6 +168,8 @@ const StripScreen = () => {
                                   borderRadius: 10,
                                   width: Dimensions.get("window").width * 0.15,
                                   marginRight:
+                                    Dimensions.get("window").width * 0.02,
+                                  marginBottom:
                                     Dimensions.get("window").width * 0.02,
                                 }}
                               />
@@ -154,8 +181,8 @@ const StripScreen = () => {
                                 height: Dimensions.get("window").width * 0.1,
                                 marginRight:
                                   Dimensions.get("window").width * 0.02,
-                                marginTop:
-                                  Dimensions.get("window").height * 0.01,
+                                // marginTop:
+                                //   Dimensions.get("window").height * 0.01,
                               }}
                             >
                               {item.value}
@@ -196,12 +223,12 @@ const styles = StyleSheet.create({
   nextContainer: {
     width: Dimensions.get("window").width / 2,
     alignItems: "flex-end",
-    paddingRight: "7%",
+    paddingRight: Dimensions.get("window").width * 0.03,
   },
   button: {
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 10,
+    borderRadius: 15,
     width: 60,
     height: 30,
     backgroundColor: Platform.OS === "android" ? Colors.primaryColor : "white",
@@ -215,16 +242,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   leftStrip: {
-    height: Dimensions.get("window").height * 1.2,
     width: Dimensions.get("window").width * 0.1,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
-    justifyContent: "space-around",
     marginRight: 5,
   },
   rightStrip: {
-    height: Dimensions.get("window").height * 1.2,
     justifyContent: "space-around",
     width: Dimensions.get("window").width * 0.83,
   },
